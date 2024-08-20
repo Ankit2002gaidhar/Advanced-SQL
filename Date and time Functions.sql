@@ -175,3 +175,63 @@ Cast('2025-08-20' as DateTime2) as [String to Datetime],
 CreationTime,
 Cast(CreationTime as Date) as [DateTime to Date]
 from Sales.Orders;
+
+
+
+-- DateAdd() 
+
+Select 
+OrderID,
+OrderDate,
+DateAdd(day,-10,OrderDate) as TenDaysBefore,
+DateAdd(year,2,OrderDate) as TwoYearsLater,
+DateAdd(month,3,OrderDate) as ThreeMonthsLater
+from Sales.Orders;
+
+-- Calculate age of employees 
+Select 
+EmployeeID,
+BirthDate,
+Datediff(year,BirthDate,GetDate()) Age
+from Sales.Employees;
+
+-- Find the average shipping duration in days for each month
+
+Select 
+DateName(month,OrderDate) as OrderDate,
+Avg(DateDiff(day,OrderDate,ShipDate)) AvgShip
+from Sales.Orders
+Group By DateName(month,OrderDate);
+
+-- Time Gap Analysis
+-- Find the number of days between each order and the previous order
+
+Select 
+OrderID,
+OrderDate CurrentOrderDate,
+Lag(OrderDate) Over(Order By OrderDate) PreviousOrderDate,
+DateDiff(day,Lag(OrderDate) over(Order By OrderDate) ,OrderDate) NrOfDays
+from Sales.Orders;
+
+
+-- IsDATE() 
+Select
+IsDate('123') DateCheck1,
+IsDate('2025-08-20') DateCheck2,
+ISDATE('20-08-2025') DteCheck3,
+ISDATE('2025') DateCheck4,
+ISDATE('08') DateCheck5
+
+Select
+   OrderDate,
+   ISDATE(OrderDate),
+   Case When ISDATE(OrderDate) =1 then Cast(OrderDate as Date)
+        else '9999-01-01'
+   End NewOrderDate
+from 
+(
+Select '2025-08-20' as OrderDate Union 
+Select '2025-08-21' Union
+Select '2025-08-23' Union
+Select '2025-08'
+)t
