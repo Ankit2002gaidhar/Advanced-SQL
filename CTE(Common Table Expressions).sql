@@ -53,3 +53,46 @@ left join CTE_Customer_Segments  ccs
 on ccs.CustomerID=c.CustomerID
 order by CustomerID;
 
+
+
+-- Generate a Sequence of numbers from 1 to 20
+With Series as (
+-- Anchor Query
+Select 
+1 as MyNumber
+Union all 
+-- Recursive Query 
+Select 
+MyNumber+1
+from Series
+where MyNumber<20
+)
+-- Main Query
+Select *
+from Series
+Option(MaxRecursion 10)
+
+-- Show the employee hierarchy by displaying each employees level within the organization
+-- Anchor Query 
+With Cte_Emp_Hierarchy as (
+Select 
+EmployeeID,
+FirstName,
+ManagerID,
+1 as Level
+from Sales.Employees
+where ManagerID is null
+union all 
+-- Recursive Query 
+Select 
+e.EmployeeID,
+e.FirstName,
+e.ManagerID,
+Level+1 
+from Sales.Employees as e
+inner join Cte_Emp_Hierarchy ceh
+on e.ManagerID=ceh.EmployeeID
+)
+Select 
+*
+from Cte_Emp_Hierarchy;
