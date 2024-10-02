@@ -1,3 +1,25 @@
+use SalesDB;
+
+-- find running total of sales for each month
+-- In sql server if we have o update the view then first we have to drop it ....
+-- and after that only we can make changes in it .
+Create View V_Monthly_Summary as(
+Select 
+DateTrunc(month,OrderDate) OrderMonth,
+sum(Sales) TotalSales,
+Count(OrderID) TotalOrders,
+Sum(Quantity) TotalQuantities
+from Sales.Orders
+group by DateTrunc(month,OrderDate)
+)
+
+Select *
+from V_Monthly_Summary;
+
+
+-- Drop the view 
+Drop View V_Monthly_Summary;
+
 -- Use Case Hide complexity
 -- Provide view that combines details from orders ,products ,customers and employees
 Create View Sales.V_Order_Detail as (
